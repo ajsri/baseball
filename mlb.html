@@ -12,28 +12,40 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
+      justify-content: center;
     }
     .game{
       background: #fff;
-      padding: 1em;
       text-align: center;
-      margin: 1em;
       box-shadow: 1px 6px 12px rgba(0, 0, 0, 0.1);
+      margin: 1em;
+      padding: 2em;
+    }
+    .game img{
+      padding: 0.25em;
     }
     .away{
       border-right: 1px solid rgba(0, 0, 0, 0.25);
     }
     .home, .away{
       float: left;
+      font-weight: 700;
+    }
+    .title h1{
+      font-weight: 700;
+    }
+    .time{
+      clear: both;
+      padding-top: 12px;
     }
     </style>
   </head>
   <body ng-app="MLBApp">
     <div ng-controller="ScoreController">
       <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-12">
-            <h3>MLB Game Schedule for {{dateName}}</h3>
+        <div class="row text-center">
+          <div class="col-md-12 title">
+            <h1>MLB Game Schedule for {{dateName}}</h1>
           </div>
         </div>
         <div class="row">
@@ -48,9 +60,13 @@
                 <img ng-src="./images/{{game.home_name_abbrev}}.gif" />
                 <p ng-bind="game.home_team_city"></p>
               </div>
-              <div>
-                <span ng-bind="game.away_time"></span> <span ng-bind="game.away_time_zone"></span>/
-                <span ng-bind="game.home_time"></span> <span ng-bind="game.home_time_zone"></span></div>
+              <div class="time">
+                <span ng-bind="game.away_time"></span> <span ng-bind="game.away_time_zone"></span>
+                <span ng-if="game.home_time_zone != game.away_time_zone">
+                  |
+                  <span ng-bind="game.home_time"></span> <span ng-bind="game.home_time_zone"></span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -63,22 +79,28 @@
   <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script src="./common/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.js"></script>
   <script>
     var mlbApp = angular.module('MLBApp', []);
 
     mlbApp.controller('ScoreController', function($scope, $http){
-      //TODO - format a date and get current day's schedule
-      //right now just hard code it
+      var date = new Date(),
+          month = date.getMonth() + 1,
+          day = date.getDate();
+      if(month < 10){
+        month = '0' + month;
+      }
+      if(day < 10) {
+        day = '0' + day;
+      }
       $scope.baseURL = 'http://gd2.mlb.com/components/game/mlb/year_2016/month_'
-      $scope.date = '04/day_08/master_scoreboard.json';
-      $scope.dateName = "Friday, April 8th";
+      $scope.date = month + '/day_' + day + '/master_scoreboard.json';
+      $scope.dateName = moment().format('MMMM Do YYYY');
       $http.get($scope.baseURL + $scope.date)
         .then(function(response){
           $scope.scoreboard = response.data;
           $scope.games = response.data.data.games.game;
-          console.log($scope.games);
         });
     });
-
   </script>
 </html>
