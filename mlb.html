@@ -2,19 +2,62 @@
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,700' rel='stylesheet' type='text/css'>
     <style>
+    body{
+      background: #f2f2f2;
+    }
+    .games{
+      font-family: 'Work Sans';
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .game{
+      background: #fff;
+      padding: 1em;
+      text-align: center;
+      margin: 1em;
+      box-shadow: 1px 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .away{
+      border-right: 1px solid rgba(0, 0, 0, 0.25);
+    }
+    .home, .away{
+      float: left;
+    }
     </style>
   </head>
   <body ng-app="MLBApp">
     <div ng-controller="ScoreController">
-      <div>
-        <div data-ng-repeat="game in games">
-          <p>
-            <img ng-src="./images/{{game.away_name_abbrev}}.gif" />
-            <img ng-src="./images/{{game.home_name_abbrev}}.gif" />
-          <p>{{game.away_team_city}} at {{game.home_team_city}} {{game.home_time}}{{game.home_time_zone}}</p>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <h3>MLB Game Schedule for {{dateName}}</h3>
+          </div>
         </div>
-      {{scoreboard.copyright}}
+        <div class="row">
+          <div class="col-md-12 games">
+            <!--Flex items -->
+            <div data-ng-repeat="game in games" class="game">
+              <div class="away">
+                <img ng-src="./images/{{game.away_name_abbrev}}.gif" />
+                <p ng-bind="game.away_team_city"></p>
+              </div>
+              <div class="home">
+                <img ng-src="./images/{{game.home_name_abbrev}}.gif" />
+                <p ng-bind="game.home_team_city"></p>
+              </div>
+              <div>
+                <span ng-bind="game.away_time"></span> <span ng-bind="game.away_time_zone"></span>/
+                <span ng-bind="game.home_time"></span> <span ng-bind="game.home_time_zone"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center" ng-bind="scoreboard.copyright"></div>
+        </div>
+      </div>
     </div>
   </body>
   <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
@@ -28,6 +71,7 @@
       //right now just hard code it
       $scope.baseURL = 'http://gd2.mlb.com/components/game/mlb/year_2016/month_'
       $scope.date = '04/day_08/master_scoreboard.json';
+      $scope.dateName = "Friday, April 8th";
       $http.get($scope.baseURL + $scope.date)
         .then(function(response){
           $scope.scoreboard = response.data;
