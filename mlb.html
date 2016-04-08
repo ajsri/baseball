@@ -9,6 +9,9 @@
     <div ng-controller="ScoreController">
       <div>
         <div data-ng-repeat="game in games">
+          <p>
+            <img ng-src="./images/{{game.away_name_abbrev}}.gif" />
+            <img ng-src="./images/{{game.home_name_abbrev}}.gif" />
           <p>{{game.away_team_city}} at {{game.home_team_city}} {{game.home_time}}{{game.home_time_zone}}</p>
         </div>
       {{scoreboard.copyright}}
